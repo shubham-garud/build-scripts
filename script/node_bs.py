@@ -271,9 +271,12 @@ if old_script!=False:
 else:
     print("\n Old_script not Present")
     print("\n Old_script not Present\n")
-    github_url=input("Enter Github URL")
-    latest_release=input("Enter version/tag to build")
+    github_url=input("Enter Github URL:")
+    latest_release=input("Enter version/tag to build:")
     package_name = input("Enter Package name (Package name should match with the directory name): ")
+    package_name = package_name.lower()
+    dir_name = f"{ROOT}{path_separator}{package_name[0]}{path_separator}{package_name}"
+
     create_new_script()
     display_details()
 
