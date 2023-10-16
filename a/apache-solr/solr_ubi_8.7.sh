@@ -2,7 +2,7 @@
 # -----------------------------------------------------------------------------
 #
 # Package          : solr
-# Version          : releases/solr/9.2.0
+# Version          : releases/solr/9.3.0
 # Source repo      : https://github.com/apache/solr
 # Tested on        : UBI 8.7
 # Language         : Java
@@ -19,7 +19,7 @@
 # ----------------------------------------------------------------------------
 
 PACKAGE_NAME=solr
-PACKAGE_VERSION=${1:-releases/solr/9.2.0}
+PACKAGE_VERSION=${1:-releases/solr/9.3.0}
 PACKAGE_URL=https://github.com/apache/solr
 HOME_DIR=${PWD}
 
