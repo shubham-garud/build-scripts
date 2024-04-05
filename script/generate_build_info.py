@@ -204,7 +204,8 @@ final_json = {
     "build_script": default_build_script,
     "package_dir": dir_name.replace(ROOT, '').strip(path_separator),
     "docker_build": True if dockerfile_versions else False,
-    "validate_build_script": True if build_scripts_versions else False
+    "validate_build_script": True if build_scripts_versions else False,
+    "use_non_root_user": False
 }
 
 for entry in dockerfile_versions:
