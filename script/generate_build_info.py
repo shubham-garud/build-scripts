@@ -134,7 +134,7 @@ def get_maintainer_from_dockerfile(dir_name):
 def get_default_build_script(build_scripts_versions):
     result=[]
     for data in build_scripts_versions:
-        if 'ubi_8.7' in data['file']:
+        if 'ubi_9.3' in data['file']:
             return [data['version'],data['file']]
         else:
             result.append((data['version'],data['file']))
