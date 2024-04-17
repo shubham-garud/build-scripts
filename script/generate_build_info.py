@@ -24,7 +24,7 @@ import json
 import requests
 import sys
 import glob
-
+import subprocess
 
 GITHUB_PACKAGE_INFO_API = "https://api.github.com/repos/{}/{}"
 
@@ -194,6 +194,11 @@ for file in file_list:
 
 default_version,default_build_script=get_default_build_script(build_scripts_versions)
 
+github_user_name_command = f"git log {dir_name}/{default_build_script}"
+github_user_name_response = subprocess.check_output(github_user_name_command,shell=True)
+github_user_name_response = github_user_name_response.decode("utf-8")
+github_user_name_response = github_user_name_response.split('\n')[1].split(':')[1].split('<')[0].strip(' ')
+maintainer = github_user_name_response
 
 final_json = {
     "maintainer" : maintainer,
