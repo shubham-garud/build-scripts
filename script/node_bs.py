@@ -213,14 +213,9 @@ def create_new_script():
     stdout, stderr=container_result.communicate()
     exit_code=container_result.wait()
    
-    cmd_2=f"python3 script/generate_build_info.py {package_name}"
-    print("\n\n Generating build_info.json")
-    build_info_w=subprocess.Popen(cmd_2,shell=True)
-    build_info_w.wait()
-    
 
     #git add commands
-    print("printing currecnt directory before adding \n",os.getcwd())
+    print("printing current directory before adding \n",os.getcwd())
     print("printing dir_name",dir_name)
     print("printing package_name",package_name)
 
@@ -233,6 +228,21 @@ def create_new_script():
         print("\n\n Git Adding build_script")
         git_add_w=subprocess.Popen(cmd_add,shell=True)
         git_add_w.wait()
+
+        #commit the build-script
+
+        commit_msg="Added build_script using automation for "+ package_name
+        cmd_commit=f"git commit -m \"{commit_msg}\" "
+        print("\n\n Commiting")
+        git_commit_w=subprocess.Popen(cmd_commit,shell=True)
+        git_commit_w.wait()
+
+
+        #create build-info.json
+        cmd_2=f"python3 script/generate_build_info.py {package_name}"
+        print("\n\n Generating build_info.json")
+        build_info_w=subprocess.Popen(cmd_2,shell=True)
+        build_info_w.wait()
 
         cmd_add=f"git add {dir_name}/build_info.json"
         print("\n\n Git Adding build_info.json")
@@ -247,11 +257,11 @@ def create_new_script():
 
 
         #git commit command
-        commit_msg="Added build_script and Build_info.json using automation for "+ package_name
+        commit_msg="Added  Build_info.json using automation for "+ package_name
         cmd_commit=f"git commit -m \"{commit_msg}\" "
         print("\n\n Commiting")
-        git_commit_w=subprocess.Popen(cmd_commit,shell=True)
-        git_commit_w.wait()
+        git_commit_build_info=subprocess.Popen(cmd_commit,shell=True)
+        git_commit_build_info.wait()
     
         #git push commands
         cmd_push=f"git push origin {package_name}_automation"
