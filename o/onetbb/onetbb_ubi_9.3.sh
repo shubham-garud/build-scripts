@@ -52,9 +52,11 @@ git clone $PACKAGE_URL
 cd $PACKAGE_NAME
 git checkout $PACKAGE_VERSION
 
+pwd
 mkdir build
+ls
 cd build/
-
+ls
 if ! (cmake -DCMAKE_INSTALL_PREFIX=/tmp/my_installed_onetbb -DTBB_TEST=OFF -DBUILD_SHARED_LIBS=ON -DTBB_BUILD=ON -DTBB4PY_BUILD=ON ..);then
         echo "------------------$PACKAGE_NAME:cmake_fails-------------------------------------"
         echo "$PACKAGE_URL $PACKAGE_NAME"
@@ -62,6 +64,8 @@ if ! (cmake -DCMAKE_INSTALL_PREFIX=/tmp/my_installed_onetbb -DTBB_TEST=OFF -DBUI
         exit 1
 fi
 
+pwd
+ls
 echo "------------Building the package------------"
 if ! (make -j4 python_build);then
         echo "------------------$PACKAGE_NAME:make_fails-------------------------------------"
@@ -70,10 +74,15 @@ if ! (make -j4 python_build);then
         exit 1
 fi
 
+pwd
+ls
+
 echo "------------Export statements------------"
 export TBBROOT=/tmp/my_installed_onetbb/
 export CMAKE_PREFIX_PATH=$TBBROOT
 
+pwd
+ls
 echo "------------Installing the package------------"
 
 if ! (make install);then
@@ -83,8 +92,13 @@ if ! (make install);then
         exit 1
 fi
 
+pwd
+ls
 cd ..
 echo "------------Applying Patch------------"
+
+pwd
+ls
 
 wget https://raw.githubusercontent.com/ppc64le/build-scripts/refs/heads/python-ecosystem/o/onetbb/tbb.patch
 git apply tbb.patch
@@ -97,9 +111,13 @@ ldconfig
 export LD_LIBRARY_PATH=/tmp/my_installed_onetbb/lib64:${LD_LIBRARY_PATH}
 
 
+pwd
+ls
 echo "-------------Testing--------------------"
 cd build
 
+pwd
+ls
 if !( cmake -DCMAKE_INSTALL_PREFIX=/tmp/my_installed_onetbb -DTBB_TEST=ON ..);then
         echo "------------------$PACKAGE_NAME:Test_fails-------------------------------------"
         echo "$PACKAGE_URL $PACKAGE_NAME"
