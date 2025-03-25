@@ -80,7 +80,8 @@ ls
 echo "------------Export statements------------"
 export TBBROOT=/tmp/my_installed_onetbb/
 export CMAKE_PREFIX_PATH=$TBBROOT
-
+export PYTHONPATH=$PYTHONPATH:/tmp/my_installed_onetbb/lib64/python3.12/site-packages
+export PYTHONPATH=/usr/lib64/python3.12/site-packages
 pwd
 ls
 echo "------------Installing the package------------"
