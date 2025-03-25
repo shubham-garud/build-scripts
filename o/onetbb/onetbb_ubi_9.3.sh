@@ -125,7 +125,7 @@ if !( cmake -DCMAKE_INSTALL_PREFIX=/tmp/my_installed_onetbb -DTBB_TEST=ON ..);th
         echo "$PACKAGE_NAME  |  $PACKAGE_URL | $PACKAGE_VERSION | GitHub | Fail |  CMAKE_Fails"
         exit 1
 fi
-if !(ctest -R python_test --output-on-failure);then
+if !(ctest CTEST_CUSTOM_TEST_DIR=/tmp/my_installed_onetbb/ -R python_test --output-on-failure);then
         echo "------------------$PACKAGE_NAME:Test_fails-------------------------------------"
         echo "$PACKAGE_URL $PACKAGE_NAME"
         echo "$PACKAGE_NAME  |  $PACKAGE_URL | $PACKAGE_VERSION | GitHub | Fail |  Test_Fails"
