@@ -125,7 +125,9 @@ if !( cmake -DCMAKE_INSTALL_PREFIX=/tmp/my_installed_onetbb -DTBB_TEST=ON ..);th
         echo "$PACKAGE_NAME  |  $PACKAGE_URL | $PACKAGE_VERSION | GitHub | Fail |  CMAKE_Fails"
         exit 1
 fi
-if !(ctest CTEST_CUSTOM_TEST_DIR=/tmp/my_installed_onetbb/ -R python_test --output-on-failure);then
+export SITE_PACKAGE_PATH=/oneTBB/build/python/build/lib64/python3.12/site-packages/TBB.py
+export SITE_PACKAGE_PATH=/tmp/my_installed_onetbb/lib64/python3.12/site-packages/TBB.py
+if !(ctest -R python_test --output-on-failure);then
         echo "------------------$PACKAGE_NAME:Test_fails-------------------------------------"
         echo "$PACKAGE_URL $PACKAGE_NAME"
         echo "$PACKAGE_NAME  |  $PACKAGE_URL | $PACKAGE_VERSION | GitHub | Fail |  Test_Fails"
