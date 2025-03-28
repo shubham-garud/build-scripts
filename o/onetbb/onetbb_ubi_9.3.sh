@@ -21,6 +21,9 @@ PACKAGE_NAME=oneTBB
 PACKAGE_VERSION=${1:-v2021.8.0}
 PACKAGE_URL=https://github.com/uxlfoundation/oneTBB
 PACKAGE_DIR=$PACKAGE_NAME/python
+HOME_DIR=${PWD}
+CURRENT_DIR="${PWD}"
+
 
 yum install -y git make cmake wget python python-devel python-pip
 
@@ -47,16 +50,17 @@ ln -s /usr/lib64/libirml.so.1 /usr/lib64/libirml.so
 
 python -m pip install wheel build setuptools
 
+cd $HOME_DIR
+ls
 echo "------------Cloning the Repository------------"
 git clone $PACKAGE_URL
 cd $PACKAGE_NAME
 git checkout $PACKAGE_VERSION
 
-pwd
 mkdir build
-ls
 cd build/
 ls
+pwd
 if ! (cmake -DCMAKE_INSTALL_PREFIX=/tmp/my_installed_onetbb -DTBB_TEST=OFF -DBUILD_SHARED_LIBS=ON -DTBB_BUILD=ON -DTBB4PY_BUILD=ON ..);then
         echo "------------------$PACKAGE_NAME:cmake_fails-------------------------------------"
         echo "$PACKAGE_URL $PACKAGE_NAME"
@@ -64,8 +68,6 @@ if ! (cmake -DCMAKE_INSTALL_PREFIX=/tmp/my_installed_onetbb -DTBB_TEST=OFF -DBUI
         exit 1
 fi
 
-pwd
-ls
 echo "------------Building the package------------"
 if ! (make -j4 python_build);then
         echo "------------------$PACKAGE_NAME:make_fails-------------------------------------"
@@ -74,16 +76,10 @@ if ! (make -j4 python_build);then
         exit 1
 fi
 
-pwd
-ls
-
 echo "------------Export statements------------"
 export TBBROOT=/tmp/my_installed_onetbb/
 export CMAKE_PREFIX_PATH=$TBBROOT
-export PYTHONPATH=$PYTHONPATH:/tmp/my_installed_onetbb/lib64/python3.12/site-packages
-export PYTHONPATH=/usr/lib64/python3.12/site-packages
-pwd
-ls
+
 echo "------------Installing the package------------"
 
 if ! (make install);then
@@ -93,13 +89,8 @@ if ! (make install);then
         exit 1
 fi
 
-pwd
-ls
 cd ..
 echo "------------Applying Patch------------"
-
-pwd
-ls
 
 wget https://raw.githubusercontent.com/ppc64le/build-scripts/refs/heads/python-ecosystem/o/onetbb/tbb.patch
 git apply tbb.patch
@@ -112,29 +103,42 @@ ldconfig
 export LD_LIBRARY_PATH=/tmp/my_installed_onetbb/lib64:${LD_LIBRARY_PATH}
 
 
-pwd
-ls
 echo "-------------Testing--------------------"
-cd build
-
-pwd
 ls
+pwd
+cd $HOME_DIR
+cd $PACKAGE_NAME/build
+pwd
 if !( cmake -DCMAKE_INSTALL_PREFIX=/tmp/my_installed_onetbb -DTBB_TEST=ON ..);then
         echo "------------------$PACKAGE_NAME:Test_fails-------------------------------------"
         echo "$PACKAGE_URL $PACKAGE_NAME"
         echo "$PACKAGE_NAME  |  $PACKAGE_URL | $PACKAGE_VERSION | GitHub | Fail |  CMAKE_Fails"
         exit 1
 fi
-export SITE_PACKAGE_PATH=/oneTBB/build/python/build/lib64/python3.12/site-packages/TBB.py
-export SITE_PACKAGE_PATH=/tmp/my_installed_onetbb/lib64/python3.12/site-packages/TBB.py
 if !(ctest -R python_test --output-on-failure);then
         echo "------------------$PACKAGE_NAME:Test_fails-------------------------------------"
         echo "$PACKAGE_URL $PACKAGE_NAME"
         echo "$PACKAGE_NAME  |  $PACKAGE_URL | $PACKAGE_VERSION | GitHub | Fail |  Test_Fails"
         exit 2
+fi
+echo "=============== Building wheel =================="
+
+# Attempt to build the wheel without isolation
+if ! python -m build --wheel --no-isolation --outdir="$CURRENT_DIR/"; then
+    echo "============ Wheel Creation Failed for Python $PYTHON_VERSION (without isolation) ================="
+    echo "Attempting to build with isolation..."
+
+    # Attempt to build the wheel without isolation
+    if ! python -m build --wheel --outdir="$CURRENT_DIR/"; then
+        echo "============ Wheel Creation Failed for Python $PYTHON_VERSION ================="
+        cleanup "$VENV_DIR"
+        [ -n "$TEMP_BUILD_SCRIPT_PATH" ] && rm "$CURRENT_DIR/$TEMP_BUILD_SCRIPT_PATH"
+        exit 1
+    fi
+fi
 else
-        echo "------------------$PACKAGE_NAME:install_&_test_both_success-------------------------"
+        echo "------------------$PACKAGE_NAME:wheel_creation_success-------------------------"
         echo "$PACKAGE_URL $PACKAGE_NAME"
-        echo "$PACKAGE_NAME  |  $PACKAGE_URL | $PACKAGE_VERSION | GitHub  | Pass |  Both_Install_and_Test_Success"
+        echo "$PACKAGE_NAME  |  $PACKAGE_URL | $PACKAGE_VERSION | GitHub  | Pass |  wheel_creation_success"
         exit 0
 fi
