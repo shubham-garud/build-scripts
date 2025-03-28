@@ -123,16 +123,17 @@ if !(ctest -R python_test --output-on-failure);then
 fi
 echo "=============== Building wheel =================="
 
+cd $HOME_DIR
+cd $PACKAGE_NAME/python
+
 # Attempt to build the wheel without isolation
 if ! python -m build --wheel --no-isolation --outdir="$CURRENT_DIR/"; then
-    echo "============ Wheel Creation Failed for Python $PYTHON_VERSION (without isolation) ================="
+    echo "============ Wheel Creation Failed for Python (without isolation) ================="
     echo "Attempting to build with isolation..."
 
     # Attempt to build the wheel without isolation
     if ! python -m build --wheel --outdir="$CURRENT_DIR/"; then
-        echo "============ Wheel Creation Failed for Python $PYTHON_VERSION ================="
-        cleanup "$VENV_DIR"
-        [ -n "$TEMP_BUILD_SCRIPT_PATH" ] && rm "$CURRENT_DIR/$TEMP_BUILD_SCRIPT_PATH"
+        echo "============ Wheel Creation Failed for Python ================="
         exit 1
     fi
 else
