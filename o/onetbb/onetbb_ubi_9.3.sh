@@ -135,7 +135,6 @@ if ! python -m build --wheel --no-isolation --outdir="$CURRENT_DIR/"; then
         [ -n "$TEMP_BUILD_SCRIPT_PATH" ] && rm "$CURRENT_DIR/$TEMP_BUILD_SCRIPT_PATH"
         exit 1
     fi
-fi
 else
         echo "------------------$PACKAGE_NAME:wheel_creation_success-------------------------"
         echo "$PACKAGE_URL $PACKAGE_NAME"
