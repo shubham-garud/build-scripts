@@ -24,7 +24,7 @@ PACKAGE_DIR=h5py
 CURRENT_DIR="${PWD}"
 
 # install core dependencies
-yum install -y wget python3.12 python3.12-pip python3.12-devel  gcc-toolset-13 gcc-toolset-13-binutils gcc-toolset-13-binutils-devel gcc-toolset-13-gcc-c++ git make cmake binutils 
+yum install -y wget python3.12 python3.12-pip python3.12-devel  gcc-toolset-13 gcc-toolset-13-binutils gcc-toolset-13-binutils-devel gcc-toolset-13-gcc-c++ git make cmake binutils pkgconfig 
 
 yum install -y libffi-devel openssl-devel sqlite-devel zip rsync
 
@@ -51,7 +51,7 @@ for package in openblas hdf5 ; do
     echo "Exported ${package^^}_PREFIX=${INSTALL_ROOT}/${package}"
 done
 
-python3.12 -m pip install cython setuptools wheel ninja build
+python3.12 -m pip install cython setuptools wheel ninja build pytest pytest-mpi
 
 #installing openblas
 cd $CURRENT_DIR
@@ -128,18 +128,23 @@ git clone https://github.com/h5py/h5py.git
 cd h5py/
 git checkout 3.13.0
 
+python3.12 -m pip install Cython==0.29.36
+python3.12 -m pip install numpy==2.0.2
+python3.12 -m pip install pkgconfig pytest-mpi setuptools==77.0.1
+python3.12 -m pip install wheel pytest pytest-mpi tox build
+
 HDF5_DIR=/install-deps/hdf5 python3.12 -m pip install .
 cd $CURRENT_DIR
 python3.12 -c "import h5py; print(h5py.__version__)"
 echo "-----------------------------------------------------Installed h5py-----------------------------------------------------"
 
 #building wheel
-# if ! (HDF5_DIR=/install-deps/hdf5 python3.12 -m build --wheel --no-isolation --outdir="$CURRENT_DIR/");then
-#     echo "------------------$PACKAGE_NAME:Wheel_build_fails-------------------------------------"
-#     echo "$PACKAGE_URL $PACKAGE_NAME"
-#     echo "$PACKAGE_NAME  |  $PACKAGE_URL | $PACKAGE_VERSION | GitHub | Fail |  Wheel_build_fails"
-#     exit 1
-# fi
+if ! (HDF5_DIR=/install-deps/hdf5 python3.12 -m build --wheel --no-isolation --outdir="$CURRENT_DIR/");then
+    echo "------------------$PACKAGE_NAME:Wheel_build_fails-------------------------------------"
+    echo "$PACKAGE_URL $PACKAGE_NAME"
+    echo "$PACKAGE_NAME  |  $PACKAGE_URL | $PACKAGE_VERSION | GitHub | Fail |  Wheel_build_fails"
+    exit 1
+fi
 
 echo "Executing the Testcases"
 cd ..
@@ -155,4 +160,3 @@ else
     echo "$PACKAGE_NAME  |  $PACKAGE_URL | $PACKAGE_VERSION | GitHub  | Pass |  Both_Install_and_Test_Success"
     exit 0
 fi
-
