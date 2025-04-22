@@ -36,8 +36,6 @@ export GCC_HOME=/opt/rh/gcc-toolset-13/root/usr
 export CC=$GCC_HOME/bin/gcc
 export CXX=$GCC_HOME/bin/g++
 
-echo "Executing h5py_3.13.0_ubi.9.3.sh"
-
 
 OS_NAME=$(cat /etc/os-release | grep ^PRETTY_NAME | cut -d= -f2)
 
@@ -108,6 +106,7 @@ cd hdf5/
 git checkout hdf5-1_12_1
 git submodule update --init
 
+mkdir -p $LOCAL_DIR/$PACKAGE_NAME
 yum install -y zlib zlib-devel
 
 ./configure --prefix=$HDF5_PREFIX --enable-cxx --enable-fortran  --with-pthread=yes --enable-threadsafe  --enable-build-mode=production --enable-unsupported  --enable-using-memchecker  --enable-clear-file-buffers --with-ssl
@@ -115,7 +114,7 @@ make
 make install PREFIX="${HDF5_PREFIX}"
 
 export LD_LIBRARY_PATH=${HDF5_PREFIX}/lib:$LD_LIBRARY_PATH
-#touch $LOCAL_DIR/hdf5/__init__.py
+touch $LOCAL_DIR/hdf5/__init__.py
 
 echo "-----------------------------------------------------Installed hdf5-----------------------------------------------------"
 wget https://raw.githubusercontent.com/ppc64le/build-scripts/refs/heads/master/h/hdf5/pyproject.toml
